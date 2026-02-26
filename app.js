@@ -79,6 +79,7 @@
   const btnBack = $("#btn-back");
   const btnNext = $("#btn-next");
   const btnSave = $("#btn-save");
+  const autosaveStatus = $("#autosave-status");
   const btnBackToScenarios = $("#btn-back-to-scenarios");
   const btnDownload = $("#btn-download");
   const btnReset = $("#btn-reset");
@@ -129,7 +130,7 @@
     scenarioTitle.textContent = sc.title;
     scenarioDesc.textContent = sc.description;
 
-    const saved = data[sc.id] || {};
+    const saved = getScenarioData(sc.id);
 
     // Restore selections
     Object.entries(FIELDS).forEach(([key, field]) => {
@@ -166,8 +167,9 @@
   // ── Autosave ──
   function autosave() {
     const sc = SCENARIOS[currentIndex];
-    data[sc.id] = collectValues();
+    data[sc.id] = { ...createEmptyScenarioResponse(), ...collectValues() };
     saveData();
+    if (autosaveStatus) autosaveStatus.textContent = "Autosaved.";
   }
 
   // ── Progress bar ──
@@ -175,13 +177,18 @@
     progressSteps.forEach((btn) => {
       const idx = btn.dataset.index;
       btn.classList.remove("active", "completed");
+      btn.removeAttribute("aria-current");
 
       if (idx === "summary") {
-        if (scenarioView.classList.contains("hidden")) btn.classList.add("active");
+        if (scenarioView.classList.contains("hidden")) {
+          btn.classList.add("active");
+          btn.setAttribute("aria-current", "step");
+        }
       } else {
         const i = parseInt(idx, 10);
         if (i === currentIndex && !scenarioView.classList.contains("hidden")) {
           btn.classList.add("active");
+          btn.setAttribute("aria-current", "step");
         }
         const scId = SCENARIOS[i].id;
         if (data[scId] && isScenarioComplete(data[scId])) {
@@ -224,17 +231,17 @@
     const tbody = document.createElement("tbody");
 
     SCENARIOS.forEach((sc) => {
-      const d = data[sc.id];
+      const d = getScenarioData(sc.id);
       const tr = document.createElement("tr");
       if (d && d.behavior) {
         tr.innerHTML = `
-          <td><strong>${sc.id}</strong></td>
-          <td>${d.behavior || "—"}</td>
-          <td>${d.output || "—"}</td>
-          <td>${d.oversight || "—"}</td>
-          <td>${d.useIt || "—"}</td>`;
+          <td><strong>${escapeHtml(sc.id)}</strong></td>
+          <td>${escapeHtml(d.behavior || "—")}</td>
+          <td>${escapeHtml(d.output || "—")}</td>
+          <td>${escapeHtml(d.oversight || "—")}</td>
+          <td>${escapeHtml(d.useIt || "—")}</td>`;
       } else {
-        tr.innerHTML = `<td><strong>${sc.id}</strong></td><td colspan="4" class="no-data">Not yet completed</td>`;
+        tr.innerHTML = `<td><strong>${escapeHtml(sc.id)}</strong></td><td colspan="4" class="no-data">Not yet completed</td>`;
       }
       tbody.appendChild(tr);
     });
@@ -243,13 +250,13 @@
 
     // Expandable cards
     SCENARIOS.forEach((sc) => {
-      const d = data[sc.id];
-      const card = document.createElement("div");
+      const d = getScenarioData(sc.id);
+      const card = document.createElement("details");
       card.className = "summary-card";
 
-      const header = document.createElement("div");
+      const header = document.createElement("summary");
       header.className = "summary-card-header";
-      header.innerHTML = `<h3>Scenario ${sc.id}: ${sc.title}</h3><span class="toggle-icon">▶</span>`;
+      header.innerHTML = `<h3>Scenario ${escapeHtml(sc.id)}: ${escapeHtml(sc.title)}</h3><span class="toggle-icon" aria-hidden="true">▶</span>`;
 
       const body = document.createElement("div");
       body.className = "summary-card-body";
@@ -261,17 +268,12 @@
           <tr><th>Output</th><td>${badge(d.output, "green")}</td></tr>
           <tr><th>Risks</th><td>${(d.risks || []).map((v) => badge(v, "red")).join(" ") || "—"}</td></tr>
           <tr><th>Oversight</th><td>${badge(d.oversight, "amber")}</td></tr>
-          <tr><th>Would Use?</th><td>${d.useIt || "—"}</td></tr>
-          <tr><th>Justification</th><td>${d.justification || "<em>None provided</em>"}</td></tr>
+          <tr><th>Would Use?</th><td>${escapeHtml(d.useIt || "—")}</td></tr>
+          <tr><th>Justification</th><td>${d.justification ? escapeHtml(d.justification) : "<em>None provided</em>"}</td></tr>
         </table>`;
       } else {
         body.innerHTML = `<p class="no-data">No responses recorded yet.</p>`;
       }
-
-      header.addEventListener("click", () => {
-        header.classList.toggle("open");
-        body.classList.toggle("open");
-      });
 
       card.appendChild(header);
       card.appendChild(body);
@@ -280,7 +282,20 @@
   }
 
   function badge(text, color) {
-    return `<span class="badge badge-${color}">${text}</span>`;
+    return `<span class="badge badge-${color}">${escapeHtml(text || "—")}</span>`;
+  }
+
+  function escapeHtml(text) {
+    return String(text).replace(/[&<>"']/g, (ch) => {
+      const entities = {
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;",
+      };
+      return entities[ch] || ch;
+    });
   }
 
   // ── Save / Load ──
@@ -295,10 +310,38 @@
   function loadData() {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
-      return raw ? JSON.parse(raw) : {};
+      if (!raw) return {};
+      const parsed = JSON.parse(raw);
+      if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return {};
+      return parsed;
     } catch (e) {
       return {};
     }
+  }
+
+  function createEmptyScenarioResponse() {
+    return {
+      behavior: null,
+      inputs: [],
+      output: null,
+      risks: [],
+      oversight: null,
+      useIt: null,
+      justification: "",
+    };
+  }
+
+  function getScenarioData(id) {
+    const saved = data && typeof data === "object" ? data[id] : null;
+    if (!saved || typeof saved !== "object" || Array.isArray(saved)) {
+      return createEmptyScenarioResponse();
+    }
+    return {
+      ...createEmptyScenarioResponse(),
+      ...saved,
+      inputs: Array.isArray(saved.inputs) ? saved.inputs : [],
+      risks: Array.isArray(saved.risks) ? saved.risks : [],
+    };
   }
 
   // ── Toast ──
@@ -363,6 +406,7 @@
     btnSave.addEventListener("click", () => {
       autosave();
       showToast("✓ Scenario saved!");
+      if (autosaveStatus) autosaveStatus.textContent = "Scenario saved.";
     });
 
     // Progress step clicks
@@ -381,6 +425,7 @@
     });
 
     btnBackToScenarios.addEventListener("click", () => {
+      if (autosaveStatus) autosaveStatus.textContent = "Autosave is on.";
       showScenarios();
       window.scrollTo({ top: 0, behavior: "smooth" });
     });
@@ -392,6 +437,7 @@
         localStorage.removeItem(STORAGE_KEY);
         data = {};
         currentIndex = 0;
+        if (autosaveStatus) autosaveStatus.textContent = "All responses reset.";
         showScenarios();
         window.scrollTo({ top: 0, behavior: "smooth" });
       }
