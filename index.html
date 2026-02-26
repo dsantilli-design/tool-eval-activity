@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tool Evaluation Practice – AI Literacy for Educators</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <header>
+    <h1>🛠️ Tool Evaluation Practice</h1>
+    <p class="subtitle">AI Literacy for Educators</p>
+  </header>
+
+  <div class="layout">
+    <!-- Reference Panel -->
+    <aside id="reference-panel" class="reference-panel">
+      <h2>AI Tool Evaluation Framework</h2>
+
+      <div class="ref-section">
+        <h3>1. AI Behavior Type</h3>
+        <ul>
+          <li><strong>Generative</strong> – Creates new content</li>
+          <li><strong>Predictive</strong> – Forecasts outcomes</li>
+          <li><strong>Assistive</strong> – Aids human tasks</li>
+          <li><strong>Adaptive</strong> – Adjusts to learner needs</li>
+        </ul>
+      </div>
+
+      <div class="ref-section">
+        <h3>2. Inputs Used</h3>
+        <ul>
+          <li>Text</li>
+          <li>Image</li>
+          <li>Audio</li>
+          <li>Structured data</li>
+          <li>Student data</li>
+        </ul>
+      </div>
+
+      <div class="ref-section">
+        <h3>3. Output Type</h3>
+        <ul>
+          <li>Draft</li>
+          <li>Decision recommendation</li>
+          <li>Analysis</li>
+          <li>Public-facing content</li>
+        </ul>
+      </div>
+
+      <div class="ref-section">
+        <h3>4. Risks</h3>
+        <ul>
+          <li>Hallucination</li>
+          <li>Bias</li>
+          <li>Privacy</li>
+          <li>Overconfidence</li>
+          <li>Synthetic realism</li>
+        </ul>
+      </div>
+
+      <div class="ref-section">
+        <h3>5. Oversight Required</h3>
+        <ul>
+          <li>Light review</li>
+          <li>Careful fact-checking</li>
+          <li>Professional validation</li>
+          <li>Not appropriate</li>
+        </ul>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main id="main-content">
+      <!-- Progress Indicator -->
+      <div id="progress-bar" class="progress-bar" role="navigation" aria-label="Scenario progress">
+        <button class="progress-step active" data-index="0" aria-current="step">A</button>
+        <button class="progress-step" data-index="1">B</button>
+        <button class="progress-step" data-index="2">C</button>
+        <button class="progress-step" data-index="3">D</button>
+        <button class="progress-step" data-index="summary">Summary</button>
+      </div>
+
+      <!-- Scenario View -->
+      <div id="scenario-view">
+        <div class="scenario-header">
+          <span id="scenario-label" class="scenario-label">Scenario A of 4</span>
+          <h2 id="scenario-title"></h2>
+          <p id="scenario-description" class="scenario-desc"></p>
+        </div>
+
+        <form id="eval-form" aria-label="Scenario evaluation form">
+          <!-- Behavior Type -->
+          <fieldset>
+            <legend>AI Behavior Type <span class="hint">(select one)</span></legend>
+            <div class="option-group" id="behavior-group"></div>
+          </fieldset>
+
+          <!-- Inputs Used -->
+          <fieldset>
+            <legend>Inputs Used <span class="hint">(select all that apply)</span></legend>
+            <div class="option-group" id="inputs-group"></div>
+          </fieldset>
+
+          <!-- Output Type -->
+          <fieldset>
+            <legend>Output Type <span class="hint">(select one)</span></legend>
+            <div class="option-group" id="output-group"></div>
+          </fieldset>
+
+          <!-- Risks -->
+          <fieldset>
+            <legend>Risks <span class="hint">(select all that apply)</span></legend>
+            <div class="option-group" id="risks-group"></div>
+          </fieldset>
+
+          <!-- Oversight Required -->
+          <fieldset>
+            <legend>Oversight Required <span class="hint">(select one)</span></legend>
+            <div class="option-group" id="oversight-group"></div>
+          </fieldset>
+
+          <!-- Would You Use It? -->
+          <fieldset>
+            <legend>Would you use this tool? <span class="hint">(select one)</span></legend>
+            <div class="option-group" id="use-group"></div>
+          </fieldset>
+
+          <!-- Justification -->
+          <fieldset>
+            <legend><label for="justification">Short Justification</label></legend>
+            <textarea id="justification" rows="3" placeholder="Briefly explain your reasoning…" aria-label="Short justification for your evaluation"></textarea>
+          </fieldset>
+        </form>
+
+        <!-- Navigation -->
+        <div class="nav-row">
+          <button id="btn-back" class="btn btn-secondary" aria-label="Previous scenario">← Back</button>
+          <button id="btn-save" class="btn btn-primary" aria-label="Save current scenario">Save Scenario</button>
+          <button id="btn-next" class="btn btn-secondary" aria-label="Next scenario">Next →</button>
+        </div>
+      </div>
+
+      <!-- Summary View -->
+      <div id="summary-view" class="hidden">
+        <h2>Summary of Your Evaluations</h2>
+        <div id="summary-content"></div>
+        <div class="nav-row summary-actions">
+          <button id="btn-back-to-scenarios" class="btn btn-secondary">← Back to Scenarios</button>
+          <button id="btn-download" class="btn btn-primary">Download Results (JSON)</button>
+          <button id="btn-reset" class="btn btn-danger">Reset All</button>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <footer>
+    <p>AI Literacy for Educators · Tool Evaluation Practice Activity</p>
+  </footer>
+
+  <script defer src="./app.js"></script>
+</body>
+</html>
