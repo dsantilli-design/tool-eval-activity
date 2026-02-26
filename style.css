@@ -86,14 +86,17 @@ header h1 { font-size: 1.5rem; font-weight: 700; }
   margin: 0.35rem 0 0.35rem 1.15rem;
   padding-left: 0;
 }
-
 .ref-section li {
   display: list-item;
-  font-size: 0.78rem;
+  font-size: .78rem;
   color: var(--clr-text-muted);
-  padding: 0.1rem 0;
+  padding: .1rem 0;
+  position: static;
 }
-
+.ref-section li::before {
+  content: none !important;
+  display: none !important;
+}
 
 /* â”€â”€ Main Content â”€â”€ */
 main {
