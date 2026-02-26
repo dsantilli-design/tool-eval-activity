@@ -1,4 +1,4 @@
-/* ── Reset & Base ── */
+/* â”€â”€ Reset & Base â”€â”€ */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
@@ -29,7 +29,7 @@ body {
   flex-direction: column;
 }
 
-/* ── Header ── */
+/* â”€â”€ Header â”€â”€ */
 header {
   background: var(--clr-primary);
   color: #fff;
@@ -39,22 +39,23 @@ header {
 header h1 { font-size: 1.5rem; font-weight: 700; }
 .subtitle { font-size: .9rem; opacity: .85; margin-top: .2rem; }
 
-/* ── Layout ── */
+/* â”€â”€ Layout â”€â”€ */
 .layout {
   display: flex;
   gap: 1.5rem;
-  max-width: 1200px;
+  max-width: 1220px;
   width: 100%;
   margin: 1.5rem auto;
   padding: 0 1rem;
   flex: 1;
+  align-items: flex-start;
 }
 
-/* ── Reference Panel ── */
+/* â”€â”€ Reference Panel â”€â”€ */
 .reference-panel {
-  position: sticky;
-  top: 1rem;
-  align-self: flex-start;
+  position: fixed;
+  top: 7rem;
+  left: max(1rem, calc(50vw - 600px));
   width: 280px;
   min-width: 250px;
   background: var(--clr-surface);
@@ -62,7 +63,7 @@ header h1 { font-size: 1.5rem; font-weight: 700; }
   border-radius: var(--radius);
   padding: 1.25rem;
   box-shadow: var(--shadow);
-  max-height: calc(100vh - 2rem);
+  max-height: calc(100vh - 8rem);
   overflow-y: auto;
 }
 .reference-panel h2 {
@@ -91,19 +92,26 @@ header h1 { font-size: 1.5rem; font-weight: 700; }
   position: relative;
 }
 .ref-section li::before {
-  content: "•";
+  content: "â€¢";
   position: absolute;
   left: 0;
   color: var(--clr-primary);
 }
 
-/* ── Main Content ── */
+/* â”€â”€ Main Content â”€â”€ */
 main {
   flex: 1;
   min-width: 0;
+  margin-left: 310px;
 }
 
-/* ── Progress Bar ── */
+.autosave-status {
+  margin: 0 0 1rem;
+  font-size: 0.82rem;
+  color: var(--clr-text-muted);
+}
+
+/* â”€â”€ Progress Bar â”€â”€ */
 .progress-bar {
   display: flex;
   gap: .5rem;
@@ -137,7 +145,7 @@ main {
   border-color: var(--clr-primary);
 }
 
-/* ── Scenario Header ── */
+/* â”€â”€ Scenario Header â”€â”€ */
 .scenario-header { margin-bottom: 1rem; }
 .scenario-label {
   display: inline-block;
@@ -158,7 +166,7 @@ main {
   color: var(--clr-text-muted);
 }
 
-/* ── Form ── */
+/* â”€â”€ Form â”€â”€ */
 #eval-form { display: flex; flex-direction: column; gap: 1rem; }
 
 fieldset {
@@ -219,7 +227,7 @@ textarea {
 }
 textarea:focus { outline: none; border-color: var(--clr-primary); box-shadow: 0 0 0 3px rgba(37,99,235,.15); }
 
-/* ── Buttons ── */
+/* â”€â”€ Buttons â”€â”€ */
 .nav-row {
   display: flex;
   justify-content: space-between;
@@ -245,7 +253,7 @@ textarea:focus { outline: none; border-color: var(--clr-primary); box-shadow: 0 
 .btn-danger { background: var(--clr-danger); color: #fff; }
 .btn-danger:hover:not(:disabled) { background: var(--clr-danger-hover); }
 
-/* ── Summary ── */
+/* â”€â”€ Summary â”€â”€ */
 .hidden { display: none !important; }
 
 #summary-content { margin-bottom: 1.25rem; }
@@ -259,6 +267,7 @@ textarea:focus { outline: none; border-color: var(--clr-primary); box-shadow: 0 
   overflow: hidden;
 }
 .summary-card-header {
+  list-style: none;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -268,12 +277,12 @@ textarea:focus { outline: none; border-color: var(--clr-primary); box-shadow: 0 
   background: var(--clr-highlight);
   border-bottom: 1px solid var(--clr-border);
 }
+.summary-card-header::-webkit-details-marker { display: none; }
 .summary-card-header:hover { background: #dbeafe; }
 .summary-card-header h3 { font-size: .95rem; }
 .summary-card-header .toggle-icon { font-size: 1.1rem; transition: transform .2s; }
-.summary-card-header.open .toggle-icon { transform: rotate(90deg); }
-.summary-card-body { padding: 1rem; display: none; }
-.summary-card-body.open { display: block; }
+.summary-card[open] .summary-card-header .toggle-icon { transform: rotate(90deg); }
+.summary-card-body { padding: 1rem; }
 
 .summary-table {
   width: 100%;
@@ -335,7 +344,7 @@ textarea:focus { outline: none; border-color: var(--clr-primary); box-shadow: 0 
   transform: translateY(0);
 }
 
-/* ── Footer ── */
+/* â”€â”€ Footer â”€â”€ */
 footer {
   text-align: center;
   padding: 1rem;
@@ -345,7 +354,7 @@ footer {
   margin-top: auto;
 }
 
-/* ── Responsive ── */
+/* â”€â”€ Responsive â”€â”€ */
 @media (max-width: 800px) {
   .layout { flex-direction: column; }
   .reference-panel {
@@ -354,5 +363,6 @@ footer {
     min-width: 0;
     max-height: none;
   }
+  main { margin-left: 0; }
   .progress-step { font-size: .75rem; padding: .4rem .15rem; }
 }
